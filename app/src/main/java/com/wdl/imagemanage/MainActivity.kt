@@ -5,14 +5,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
+import com.wdl.image.ImageDownload
 import com.wdl.image.ImageGetter
 import com.wdl.lib.PermissionUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.security.Permission
-import java.security.Permissions
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private var imageGetter: ImageGetter? = null
@@ -71,6 +70,27 @@ class MainActivity : AppCompatActivity() {
 
         mAlbum.setOnClickListener {
             imageGetter?.getImageFromAlbum()
+        }
+
+        mDownload.setOnClickListener {
+            val remotePath = "http://resource.yy.fanwe.cn/vcoin/emoji/256_20191015151259045079.jpg"
+            Thread(Runnable {
+                ImageDownload.download(remotePath, null, object : ImageDownload.DownloadListener {
+                    override fun onProgress(progress: Int) {
+                        Log.e("MainActivity", "onProgress : $progress")
+                    }
+
+                    override fun onError(e: Exception) {
+                        Log.e("MainActivity", "onError : ${e.message}")
+                    }
+
+                    override fun onComplete(savePath: String) {
+                        Log.e("MainActivity", "onComplete : $savePath")
+                    }
+
+                })
+            }).start()
+
         }
 
     }

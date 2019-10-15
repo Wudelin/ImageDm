@@ -17,6 +17,12 @@ import java.lang.ref.WeakReference
 /**
  * Create by: wdl at 2019/10/15 10:11
  */
+/**
+ * 回调码
+ */
+const val REQUEST_CODE_GET_IMAGE_FROM_CAMERA = 0X01
+const val REQUEST_CODE_GET_IMAGE_FROM_ALBUM = REQUEST_CODE_GET_IMAGE_FROM_CAMERA + 1
+
 @Suppress("unused")
 class ImageGetter(activity: Activity) {
     /**
@@ -25,22 +31,12 @@ class ImageGetter(activity: Activity) {
     private val weakReference: WeakReference<Activity> = WeakReference(activity)
 
     /**
-     * 回调码
-     */
-    private val REQUEST_CODE_GET_IMAGE_FROM_CAMERA = 0X01
-    private val REQUEST_CODE_GET_IMAGE_FROM_ALBUM = REQUEST_CODE_GET_IMAGE_FROM_CAMERA + 1
-
-    /**
      * 路径
      */
     private var mCameraImageDir: File? = null
     private var mCameraImageFile: File? = null
 
-
     var mCallback: Callback? = null
-        set(value) {
-            field = value
-        }
 
     interface Callback {
         /**
@@ -70,7 +66,7 @@ class ImageGetter(activity: Activity) {
     /**
      * 系统相册获取图片
      */
-    public fun getImageFromAlbum() {
+    fun getImageFromAlbum() {
         try {
             val intent = Intent()
             intent.action = Intent.ACTION_PICK
@@ -85,7 +81,7 @@ class ImageGetter(activity: Activity) {
     /**
      * Camera获取图片
      */
-    public fun getImageFromCamera() {
+    fun getImageFromCamera() {
         if (getCameraImageDir() == null) {
             mCallback?.onError("获取缓存目录失败")
             return
@@ -152,7 +148,6 @@ class ImageGetter(activity: Activity) {
     private fun scanFile(context: Context, file: File?) {
 
         if (file == null || !file.exists()) {
-            Log.e("scanFile", "scanFile : ------------------------------")
             return
         }
         val intent = Intent()
@@ -190,7 +185,7 @@ class ImageGetter(activity: Activity) {
     /**
      * 回调转接
      */
-    public fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (mCallback == null) return
 
         when (requestCode) {
@@ -231,6 +226,4 @@ class ImageGetter(activity: Activity) {
             }
         }
     }
-
-
 }
